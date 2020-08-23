@@ -1,0 +1,79 @@
+Team members: 
+Saarthak Kapse 			- 16D070041
+Sudhir Kumar Suman 		- 16D070027
+Abhinav Seth 			- 16D070029
+
+Q1) 
+	We changed following parameters :-
+    power=0.05 (exponent to determine number of gaussians from occurrence counts) 
+    totgauss=4000 
+    And WER with these parameters is %WER 51.37 [ 562 / 1094, 31 ins, 132 del, 399 sub ]
+
+Q2) 
+    a)_B is added to first phone of word whereas _E is added to last phone of word. _I is used for all internal phones in word.
+	And _S is used for word with only one character. It is used to enhance pronunciation of word as pronunciation of phones depends on its position in the word.
+  	b) #number are disambiguation symbols to seperate words with same phonetic representation like in (red and read). 
+
+
+Q3)
+	a) WER dropped from 55.30 to 46.44 that is total 4.93% improvement using triphones. *default parameters in train_mono.sh  is used
+
+	b) The first parameter represent total leaves and 2nd represents total gaussians.
+	   First we tuned gaussian keeping leaves to be 2000 and following were the observation.
+
+	   Gaussians     WER
+	    15000		49.63
+		19000		48.17
+		19500		46.62
+		20000		46.44
+		20250		46.71
+		20500		45.61
+		20750		46.98
+		21000		48.17
+		22000		47.07
+		24000		46.98
+		27000		46.62
+		25000		46.07
+		30000		46.53
+		40000		46.98
+
+		so we fixed gaussian to be 20500 as it gives best WER.
+		the we tuned #leaves keeping #gaussians=20500 and following were the observations
+
+		leafs	 wer
+		 500    46.98
+		 800    46.98
+		1000	45.61
+		1500	46.89
+		1900	47.07
+		2000	45.61
+		2100	46.25
+		2500	48.63
+		3000	46.71
+
+		which shows the keeping leaves 2000 or 1000 gives same and best results.
+		So i am fixing #leafs=1000 and #gaussians=20500
+
+		The best tuned hyper parameters is 1000 and 20500 respectively which gave a WER of 45.61%.
+
+Q5) 
+	Here big.arpa is used to make g.fst which shows large improvement in WER
+
+	a)%WER 43.78 [ 479 / 1094, 49 ins, 80 del, 350 sub ]  using decode.sh , Time is around 4 minutes
+    b)%WER 43.33 [ 474 / 1094, 24 ins, 134 del, 316 sub ] using lmrescore.sh , Time is around 30 seconds
+	so lmrescore method was much faster
+
+	*default parameters of train_mono.sh is used.
+
+Q6) 
+	(g)  %WER 38.21 [ 277 / 725, 33 ins, 40 del, 204 sub ]
+	(l)  %WER 82.98 [ 156 / 188, 5 ins, 68 del, 83 sub ]
+	(m)  %WER 53.12 [ 51 / 96, 4 ins, 12 del, 35 sub ]
+	(n)  %WER 71.76 [ 61 / 85, 3 ins, 24 del, 34 sub ]
+
+	WER shown above is of wer_* which has best overall WER on complete test dataset and not case-wise best.
+
+	As 'g' type corresponds to good utterances so its pretty obvious it to have best WER and 'l' worst as it contains very noisy utterances. And 'm' and 'n' is not predictable as we dont know how much interference is introduced by music in 'm'.
+
+Q7) 
+	Output wav files are write into task7/output folder.
